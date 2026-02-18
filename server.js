@@ -7,6 +7,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 
 const app = express();
+app.set("trust proxy", true);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
