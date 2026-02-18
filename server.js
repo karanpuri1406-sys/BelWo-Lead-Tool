@@ -11,6 +11,18 @@ app.set("trust proxy", true);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+// ═══ Crash Protection ═══
+process.on("uncaughtException", (err) => {
+  console.error("[CRASH GUARD] Uncaught Exception:", err.message);
+  console.error(err.stack);
+  // Server keeps running — do not exit
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("[CRASH GUARD] Unhandled Rejection:", reason);
+  // Server keeps running — do not exit
+});
+
 // ═══ State ═══
 let openRouterKey = "";
 let selectedModel = "google/gemini-2.0-flash-001";
@@ -43,8 +55,9 @@ function loadViData() {
 }
 loadViData();
 
-// Debounced persistence
+// Debounced persistence (10s on Render for faster saves, 30s locally)
 let saveTimer = null;
+const SAVE_DELAY = process.env.RENDER_EXTERNAL_URL ? 10000 : 30000;
 function scheduleSave() {
   if (saveTimer) return;
   saveTimer = setTimeout(() => {
@@ -53,7 +66,7 @@ function scheduleSave() {
     try { fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(eventBuffer.slice(-EVENT_BUFFER_MAX))); } catch {}
     try { fs.writeFileSync(path.join(dataDir, "tracked-links.json"), JSON.stringify([...trackedLinks])); } catch {}
     saveTimer = null;
-  }, 30000);
+  }, SAVE_DELAY);
 }
 
 // IP Geolocation via ip-api.com (free, no key required)
@@ -912,96 +925,100 @@ app.delete("/api/vi/sites/:siteId", (req, res) => {
 app.post("/api/track", async (req, res) => {
   res.sendStatus(204); // Respond immediately
 
-  // Parse body - may be string (text/plain from sendBeacon) or object (application/json)
-  let body = req.body;
-  if (typeof body === "string") { try { body = JSON.parse(body); } catch(e) { return; } }
+  try {
+    // Parse body - may be string (text/plain from sendBeacon) or object (application/json)
+    let body = req.body;
+    if (typeof body === "string") { try { body = JSON.parse(body); } catch(e) { return; } }
 
-  const { siteId, fingerprint: fp, sessionId, type, timestamp, data } = body;
-  if (!siteId || !fp || !type) return;
+    const { siteId, fingerprint: fp, sessionId, type, timestamp, data } = body;
+    if (!siteId || !fp || !type) return;
 
-  // Get visitor IP
-  const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip || req.socket?.remoteAddress || "";
+    // Get visitor IP
+    const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip || req.socket?.remoteAddress || "";
 
-  // Find or create visitor
-  let visitor = null;
-  for (const v of visitors.values()) {
-    if (v.fingerprintHash === fp) { visitor = v; break; }
-  }
+    // Find or create visitor
+    let visitor = null;
+    for (const v of visitors.values()) {
+      if (v.fingerprintHash === fp) { visitor = v; break; }
+    }
 
-  if (!visitor) {
-    const geo = await geolocateIP(ip);
-    const visitorId = genId("v");
-    visitor = {
-      visitorId,
-      fingerprintHash: fp,
-      identified: false,
-      identity: null,
-      firstSeen: timestamp || new Date().toISOString(),
-      lastSeen: timestamp || new Date().toISOString(),
-      totalSessions: 1,
-      totalPageviews: 0,
-      engagementScore: 0,
-      geo: { ip, ...geo },
-      company: { name: geo.org || "", domain: "" },
-      device: {
-        browser: extractBrowser(req.headers["user-agent"] || ""),
-        os: extractOS(req.headers["user-agent"] || ""),
-        deviceType: data?.deviceType || "desktop",
-        screenResolution: (data?.screenWidth && data?.screenHeight) ? `${data.screenWidth}x${data.screenHeight}` : ""
-      },
-      siteIds: [siteId],
-      sessions: [sessionId]
+    if (!visitor) {
+      const geo = await geolocateIP(ip);
+      const visitorId = genId("v");
+      visitor = {
+        visitorId,
+        fingerprintHash: fp,
+        identified: false,
+        identity: null,
+        firstSeen: timestamp || new Date().toISOString(),
+        lastSeen: timestamp || new Date().toISOString(),
+        totalSessions: 1,
+        totalPageviews: 0,
+        engagementScore: 0,
+        geo: { ip, ...geo },
+        company: { name: geo.org || "", domain: "" },
+        device: {
+          browser: extractBrowser(req.headers["user-agent"] || ""),
+          os: extractOS(req.headers["user-agent"] || ""),
+          deviceType: data?.deviceType || "desktop",
+          screenResolution: (data?.screenWidth && data?.screenHeight) ? `${data.screenWidth}x${data.screenHeight}` : ""
+        },
+        siteIds: [siteId],
+        sessions: [sessionId]
+      };
+      visitors.set(visitorId, visitor);
+    } else {
+      visitor.lastSeen = timestamp || new Date().toISOString();
+      if (!visitor.sessions.includes(sessionId)) {
+        visitor.sessions.push(sessionId);
+        visitor.totalSessions++;
+      }
+      if (!visitor.siteIds) visitor.siteIds = [];
+      if (!visitor.siteIds.includes(siteId)) visitor.siteIds.push(siteId);
+    }
+
+    if (type === "pageview") visitor.totalPageviews++;
+
+    // Check for tracked link identification
+    if (data?.trackingId) {
+      const tl = trackedLinks.get(data.trackingId);
+      if (tl && tl.leadInfo) {
+        visitor.identified = true;
+        visitor.identity = { ...tl.leadInfo, identifiedAt: new Date().toISOString(), source: tl.messageType };
+        tl.clicks = (tl.clicks || 0) + 1;
+        tl.lastClicked = new Date().toISOString();
+      }
+    }
+
+    // Compute engagement
+    visitor.engagementScore = computeEngagement(visitor);
+
+    // Store event
+    const event = {
+      eventId: genId("e"),
+      siteId,
+      visitorId: visitor.visitorId,
+      sessionId,
+      type,
+      timestamp: timestamp || new Date().toISOString(),
+      data: data || {}
     };
-    visitors.set(visitorId, visitor);
-  } else {
-    visitor.lastSeen = timestamp || new Date().toISOString();
-    if (!visitor.sessions.includes(sessionId)) {
-      visitor.sessions.push(sessionId);
-      visitor.totalSessions++;
-    }
-    if (!visitor.siteIds) visitor.siteIds = [];
-    if (!visitor.siteIds.includes(siteId)) visitor.siteIds.push(siteId);
+    eventBuffer.push(event);
+    if (eventBuffer.length > EVENT_BUFFER_MAX) eventBuffer.splice(0, eventBuffer.length - EVENT_BUFFER_MAX);
+
+    // Update active sessions
+    activeSessions.set(visitor.visitorId, { timestamp: Date.now(), page: data?.path || data?.url || "", siteId });
+
+    // Broadcast to SSE clients
+    broadcastSSE({
+      type: "event",
+      event: { ...event, visitor: { visitorId: visitor.visitorId, identified: visitor.identified, identity: visitor.identity, geo: visitor.geo, device: visitor.device } }
+    });
+
+    scheduleSave();
+  } catch (err) {
+    console.error("[TRACK ERROR]", err.message);
   }
-
-  if (type === "pageview") visitor.totalPageviews++;
-
-  // Check for tracked link identification
-  if (data?.trackingId) {
-    const tl = trackedLinks.get(data.trackingId);
-    if (tl && tl.leadInfo) {
-      visitor.identified = true;
-      visitor.identity = { ...tl.leadInfo, identifiedAt: new Date().toISOString(), source: tl.messageType };
-      tl.clicks = (tl.clicks || 0) + 1;
-      tl.lastClicked = new Date().toISOString();
-    }
-  }
-
-  // Compute engagement
-  visitor.engagementScore = computeEngagement(visitor);
-
-  // Store event
-  const event = {
-    eventId: genId("e"),
-    siteId,
-    visitorId: visitor.visitorId,
-    sessionId,
-    type,
-    timestamp: timestamp || new Date().toISOString(),
-    data: data || {}
-  };
-  eventBuffer.push(event);
-  if (eventBuffer.length > EVENT_BUFFER_MAX) eventBuffer.splice(0, eventBuffer.length - EVENT_BUFFER_MAX);
-
-  // Update active sessions
-  activeSessions.set(visitor.visitorId, { timestamp: Date.now(), page: data?.path || data?.url || "", siteId });
-
-  // Broadcast to SSE clients
-  broadcastSSE({
-    type: "event",
-    event: { ...event, visitor: { visitorId: visitor.visitorId, identified: visitor.identified, identity: visitor.identity, geo: visitor.geo, device: visitor.device } }
-  });
-
-  scheduleSave();
 });
 
 // Simple UA parsing helpers
@@ -1291,9 +1308,52 @@ app.post("/api/vi/export-visitors", (req, res) => {
 
 // ═══════════════════════════════════════════════════════════════
 
+// ═══ Express Global Error Handler ═══
+app.use((err, req, res, next) => {
+  console.error("[EXPRESS ERROR]", err.message);
+  if (!res.headersSent) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ═══ Graceful Shutdown — save all data before exiting ═══
+function saveAllDataSync() {
+  console.log("[SHUTDOWN] Saving all data...");
+  try { fs.writeFileSync(path.join(dataDir, "sites.json"), JSON.stringify([...sites])); } catch {}
+  try { fs.writeFileSync(path.join(dataDir, "visitors.json"), JSON.stringify([...visitors])); } catch {}
+  try { fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(eventBuffer.slice(-EVENT_BUFFER_MAX))); } catch {}
+  try { fs.writeFileSync(path.join(dataDir, "tracked-links.json"), JSON.stringify([...trackedLinks])); } catch {}
+  console.log("[SHUTDOWN] Data saved.");
+}
+
+process.on("SIGINT", () => { saveAllDataSync(); process.exit(0); });
+process.on("SIGTERM", () => { saveAllDataSync(); process.exit(0); });
+process.on("exit", () => { saveAllDataSync(); });
+
+// ═══ Health Check Endpoint (for Render + keep-alive) ═══
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", uptime: process.uptime(), visitors: visitors.size, sites: sites.size });
+});
+
 const PORT = process.env.PORT || 3456;
 app.listen(PORT, () => {
   console.log(`Belwo Lead Generation Tool running on port ${PORT}`);
   console.log(`Using OpenRouter API — model: ${selectedModel}`);
   console.log(`Visitor Intelligence active — ${sites.size} sites, ${visitors.size} visitors tracked`);
+  console.log(`Crash protection: ENABLED`);
+
+  // ═══ Keep-Alive Self-Ping (prevents Render free tier from sleeping) ═══
+  const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
+  if (RENDER_URL) {
+    const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
+    setInterval(() => {
+      fetch(`${RENDER_URL}/health`)
+        .then(r => r.json())
+        .then(d => console.log(`[KEEP-ALIVE] Ping OK — uptime: ${Math.round(d.uptime)}s, visitors: ${d.visitors}`))
+        .catch(err => console.error("[KEEP-ALIVE] Ping failed:", err.message));
+    }, PING_INTERVAL);
+    console.log(`[KEEP-ALIVE] Self-ping enabled every 14 min → ${RENDER_URL}/health`);
+  } else {
+    console.log(`[KEEP-ALIVE] Not on Render — self-ping disabled (set RENDER_EXTERNAL_URL to enable)`);
+  }
 });
