@@ -628,7 +628,46 @@ app.post("/api/export-messages", (req, res) => {
 // ═══ PAIN POINT ANALYSIS ═══
 
 function cleanJsonResponse(text) {
-  return text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+  // Strip markdown code fences
+  let cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+  // Extract JSON object/array if surrounded by extra text
+  const jsonMatch = cleaned.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+  if (jsonMatch) cleaned = jsonMatch[1];
+
+  // Fix trailing commas before ] or } (common AI mistake)
+  cleaned = cleaned.replace(/,\s*([\]}])/g, "$1");
+
+  // Fix unescaped newlines inside string values
+  cleaned = cleaned.replace(/:\s*"([^"]*)\n([^"]*?)"/g, (match, p1, p2) => {
+    return `: "${p1}\\n${p2}"`;
+  });
+
+  // Try parsing as-is first
+  try { JSON.parse(cleaned); return cleaned; } catch {}
+
+  // If truncated, try to auto-close brackets
+  let attempt = cleaned;
+  const opens = (attempt.match(/\{/g) || []).length;
+  const closes = (attempt.match(/\}/g) || []).length;
+  const openBrackets = (attempt.match(/\[/g) || []).length;
+  const closeBrackets = (attempt.match(/\]/g) || []).length;
+
+  // Remove trailing partial entries (incomplete strings/objects)
+  attempt = attempt.replace(/,\s*"[^"]*"?\s*:?\s*"?[^"}\]]*$/, "");
+  attempt = attempt.replace(/,\s*\{[^}]*$/, "");
+
+  // Close unclosed brackets
+  for (let i = 0; i < openBrackets - closeBrackets; i++) attempt += "]";
+  for (let i = 0; i < opens - closes; i++) attempt += "}";
+
+  // Fix trailing commas again after truncation repair
+  attempt = attempt.replace(/,\s*([\]}])/g, "$1");
+
+  try { JSON.parse(attempt); return attempt; } catch {}
+
+  // Last resort: return cleaned and let caller handle parse error
+  return cleaned;
 }
 
 function buildResearchPrompt(companyName, industryData, website, context) {
@@ -773,20 +812,29 @@ app.post("/api/analyze-painpoints", async (req, res) => {
   try {
     const industryData = TARGET_INDUSTRIES[industry] || TARGET_INDUSTRIES["enterprise"];
 
+    // Helper: call AI and parse JSON with one retry on failure
+    async function callAndParseJSON(promptFn, temp) {
+      const text = await callOpenRouter(promptFn, temp);
+      try {
+        return JSON.parse(cleanJsonResponse(text));
+      } catch (firstErr) {
+        console.error("[PAIN POINT] JSON parse failed, retrying...", firstErr.message);
+        const retryText = await callOpenRouter(promptFn, Math.max(0.1, temp - 0.2));
+        return JSON.parse(cleanJsonResponse(retryText));
+      }
+    }
+
     // Step 1: Industry & Company Research
     const research = await callOpenRouter(buildResearchPrompt(companyName, industryData, website, context), 0.7);
 
     // Step 2: Pain Point Identification
-    const painPointsText = await callOpenRouter(buildPainPointsPrompt(companyName, industryData, research, context), 0.6);
-    const painPoints = JSON.parse(cleanJsonResponse(painPointsText));
+    const painPoints = await callAndParseJSON(buildPainPointsPrompt(companyName, industryData, research, context), 0.6);
 
     // Step 3: Messaging Angles
-    const messagingText = await callOpenRouter(buildMessagingPrompt(companyName, industryData, painPoints, context), 0.7);
-    const messaging = JSON.parse(cleanJsonResponse(messagingText));
+    const messaging = await callAndParseJSON(buildMessagingPrompt(companyName, industryData, painPoints, context), 0.7);
 
     // Step 4: Outreach Templates
-    const templatesText = await callOpenRouter(buildTemplatesPrompt(companyName, industryData, painPoints, messaging, context), 0.8);
-    const templates = JSON.parse(cleanJsonResponse(templatesText));
+    const templates = await callAndParseJSON(buildTemplatesPrompt(companyName, industryData, painPoints, messaging, context), 0.8);
 
     res.json({
       companyName,
