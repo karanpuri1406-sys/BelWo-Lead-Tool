@@ -85,7 +85,7 @@
     var url = serverUrl + '/api/track';
     try {
       if (navigator.sendBeacon) {
-        navigator.sendBeacon(url, new Blob([payload], {type: 'application/json'}));
+        navigator.sendBeacon(url, new Blob([payload], {type: 'text/plain'}));
       } else {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url, true);

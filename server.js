@@ -869,6 +869,8 @@ app.use("/api/track", (req, res, next) => {
   if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
 });
+// Parse text/plain bodies as JSON (sendBeacon uses text/plain to avoid CORS preflight)
+app.use("/api/track", express.text({ type: "text/plain" }));
 
 // ─── Site Management ───
 
@@ -910,7 +912,11 @@ app.delete("/api/vi/sites/:siteId", (req, res) => {
 app.post("/api/track", async (req, res) => {
   res.sendStatus(204); // Respond immediately
 
-  const { siteId, fingerprint: fp, sessionId, type, timestamp, data } = req.body;
+  // Parse body - may be string (text/plain from sendBeacon) or object (application/json)
+  let body = req.body;
+  if (typeof body === "string") { try { body = JSON.parse(body); } catch(e) { return; } }
+
+  const { siteId, fingerprint: fp, sessionId, type, timestamp, data } = body;
   if (!siteId || !fp || !type) return;
 
   // Get visitor IP
