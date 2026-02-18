@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belwo Lead Gen — AI-Powered B2B Lead Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Dark Space Theme */
+      --bg-void: #070912;
+      --bg-deep: #0a0e1a;
+      --bg-surface: #0f1525;
+      --bg-elevated: #141b2e;
+
+      /* Glass Morphism */
+      --glass-bg: rgba(20, 27, 46, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --glass-glow: rgba(94, 234, 212, 0.05);
+
+      /* Electric Gradients */
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-success: linear-gradient(135deg, #5eead4 0%, #3b82f6 100%);
+      --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+      --gradient-mesh: radial-gradient(at 0% 0%, rgba(102, 126, 234, 0.15) 0px, transparent 50%),
+                       radial-gradient(at 100% 0%, rgba(94, 234, 212, 0.1) 0px, transparent 50%),
+                       radial-gradient(at 100% 100%, rgba(118, 75, 162, 0.15) 0px, transparent 50%),
+                       radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+
+      /* Colors */
+      --cyan: #5eead4;
+      --cyan-glow: rgba(94, 234, 212, 0.3);
+      --purple: #667eea;
+      --purple-glow: rgba(102, 126, 234, 0.3);
+      --pink: #ec4899;
+      --orange: #f59e0b;
+      --blue: #3b82f6;
+
+      /* Text */
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-dim: #475569;
+
+      /* Typography */
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* Effects */
+      --shadow-glow: 0 0 30px rgba(94, 234, 212, 0.15);
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --shadow-elevated: 0 20px 60px rgba(0, 0, 0, 0.6);
+      --blur-glass: 20px;
+      --radius: 16px;
+      --radius-lg: 24px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-void);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background Mesh */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient-mesh);
+      pointer-events: none;
+      z-index: 0;
+      animation: meshMove 20s ease-in-out infinite;
+    }
+
+    @keyframes meshMove {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+
+    /* ═══ LAYOUT ═══ */
+    .app {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ═══ SIDEBAR ═══ */
+    .sidebar {
+      width: 280px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur-glass));
+      -webkit-backdrop-filter: blur(var(--blur-glass));
+      border-right: 1px solid var(--glass-border);
+      padding: 40px 24px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      overflow-y: auto;
+      box-shadow: var(--shadow-card);
+    }
+
+    .sidebar-header {
+      margin-bottom: 48px;
+      animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sidebar-brand {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      background: var(--gradient-success);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .sidebar-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      flex: 1;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 6px;
+      animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+
+    .sidebar-nav li:nth-child(1) { animation-delay: 0.1s; }
+    .sidebar-nav li:nth-child(2) { animation-delay: 0.15s; }
+    .sidebar-nav li:nth-child(3) { animation-delay: 0.2s; }
+    .sidebar-nav li:nth-child(4) { animation-delay: 0.25s; }
+
+    .sidebar-nav button {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 14px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar-nav button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-success);
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: 12px;
+    }
+
+    .sidebar-nav button:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateX(4px);
+    }
+
+    .sidebar-nav button.active {
+      color: var(--cyan);
+      background: rgba(94, 234, 212, 0.08);
+      box-shadow: 0 0 20px rgba(94, 234, 212, 0.1);
+    }
+
+    .sidebar-nav button.active::before {
+      opacity: 0.1;
+    }
+
+    .sidebar-nav button.active .nav-icon {
+      filter: drop-shadow(0 0 8px var(--cyan-glow));
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar-footer {
+      padding-top: 24px;
+      border-top: 1px solid var(--glass-border);
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+
+    .sidebar-footer a {
+      color: var(--cyan);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .sidebar-footer a:hover {
+      color: var(--text-primary);
+    }
+
+    /* ═══ MAIN CONTENT ═══ */
+    .main {
+      margin-left: 280px;
+      flex: 1;
+      padding: 48px 64px;
+      max-width: 1400px;
+      position: relative;
+    }
+
+    /* ═══ PAGE HEADER ═══ */
+    .page-header {
+      margin-bottom: 48px;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .page-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(94, 234, 212, 0.08);
+      border-radius: 6px;
+      border: 1px solid rgba(94, 234, 212, 0.2);
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .page-title em {
+      font-style: normal;
+      background: var(--gradient-success);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+
+    /* ═══ PANELS ═══ */
+    .panel { display: none; }
+    .panel.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    /* ═══ GLASS CARDS ═══ */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur-glass));
+      -webkit-backdrop-filter: blur(var(--blur-glass));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+
+    .card:hover {
+      border-color: rgba(94, 234, 212, 0.15);
+      box-shadow: var(--shadow-elevated), var(--shadow-glow);
+      transform: translateY(-2px);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .card-subtitle a {
+      color: var(--cyan);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .card-subtitle a:hover {
+      color: var(--text-primary);
+    }
+
+    /* ═══ FORMS ═══ */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group { margin-bottom: 24px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1.5px solid var(--glass-border);
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-primary);
+      background: rgba(15, 21, 37, 0.5);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--cyan);
+      background: rgba(15, 21, 37, 0.8);
+      box-shadow: 0 0 0 4px rgba(94, 234, 212, 0.1), 0 0 20px rgba(94, 234, 212, 0.15);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .form-input.mono {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.3px;
+    }
+
+    select.form-input {
+      cursor: pointer;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    select.form-input option {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      padding: 10px;
+    }
+
+    textarea.form-input {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    /* ═══ BUTTONS ═══ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+    }
+
+    .btn-primary {
+      background: var(--gradient-success);
+      color: white;
+      box-shadow: 0 4px 16px rgba(94, 234, 212, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(94, 234, 212, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1.5px solid var(--glass-border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--cyan);
+      background: var(--bg-surface);
+      box-shadow: 0 0 20px rgba(94, 234, 212, 0.1);
+    }
+
+    .btn-sm {
+      padding: 10px 20px;
+      font-size: 13px;
+    }
+
+    .btn-purple {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-purple:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    /* ═══ STATUS BAR ═══ */
+    .status-bar {
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid;
+      animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .status-bar.show { display: flex; }
+
+    .status-bar.success {
+      background: rgba(94, 234, 212, 0.1);
+      border-color: rgba(94, 234, 212, 0.3);
+      color: var(--cyan);
+    }
+
+    .status-bar.error {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .status-bar.info {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+    }
+
+    .status-bar.loading {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fcd34d;
+    }
+
+    /* ═══ STATS GRID ═══ */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur-glass));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--gradient-success);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(94, 234, 212, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 8px;
+      background: var(--gradient-success);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    /* ═══ LEAD CARDS ═══ */
+    .lead-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur-glass));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      border-left: 3px solid var(--cyan);
+    }
+
+    .lead-card:hover {
+      border-color: rgba(94, 234, 212, 0.3);
+      box-shadow: var(--shadow-elevated), var(--shadow-glow);
+      transform: translateY(-2px);
+    }
+
+    .lead-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      gap: 16px;
+    }
+
+    .lead-company {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .lead-person {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+
+    .lead-title {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .lead-meta {
+      display: flex;
+      gap: 12px;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+
+    .lead-info {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px 16px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .lead-info-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .lead-info-value {
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .lead-info-value a {
+      color: var(--cyan);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .lead-info-value a:hover {
+      color: var(--text-primary);
+    }
+
+    .lead-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    /* ═══ MESSAGE PREVIEW ═══ */
+    .message-preview {
+      background: rgba(15, 21, 37, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+      position: relative;
+    }
+
+    .message-type {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+    }
+
+    .message-subject {
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+
+    .message-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      line-height: 1.8;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      font-size: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--cyan);
+      color: var(--bg-void);
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px rgba(94, 234, 212, 0.4);
+    }
+
+    .copy-btn.copied {
+      background: var(--cyan);
+      color: var(--bg-void);
+    }
+
+    /* ═══ BADGES ═══ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+
+    .badge-green {
+      background: rgba(94, 234, 212, 0.1);
+      color: var(--cyan);
+      border-color: rgba(94, 234, 212, 0.3);
+    }
+
+    .badge-blue {
+      background: rgba(59, 130, 246, 0.1);
+      color: #93c5fd;
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-purple {
+      background: rgba(139, 92, 246, 0.1);
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .badge-orange {
+      background: rgba(245, 158, 11, 0.1);
+      color: #fcd34d;
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    /* ═══ SPINNER ═══ */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(94, 234, 212, 0.2);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ═══ DATA TABLE ═══ */
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .data-table th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(15, 21, 37, 0.5);
+      font-weight: 600;
+    }
+
+    .data-table td {
+      padding: 18px 20px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--glass-border);
+      vertical-align: middle;
+      color: var(--text-secondary);
+    }
+
+    .data-table tr {
+      transition: all 0.2s;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(94, 234, 212, 0.04);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ═══ ANIMATIONS ═══ */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideRight {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 1024px) {
+      .sidebar { width: 240px; padding: 32px 20px; }
+      .main { margin-left: 240px; padding: 32px 40px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+      }
+      .main {
+        margin-left: 0;
+        padding: 24px;
+      }
+      .page-title { font-size: 36px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ═══ SCROLLBAR ═══ */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(94, 234, 212, 0.3);
+    }
+
+    /* Visitor Intelligence Styles */
+    @keyframes pulse-green {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .vi-live-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .vi-live-row:last-child { border-bottom: none; }
+
+    .vi-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .vi-avatar.anonymous { background: rgba(100, 116, 139, 0.3); color: var(--text-muted); }
+    .vi-avatar.identified { background: rgba(94, 234, 212, 0.2); color: var(--cyan); }
+
+    .vi-score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 28px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .vi-score.high { background: rgba(94, 234, 212, 0.15); color: var(--cyan); }
+    .vi-score.medium { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+    .vi-score.low { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
+
+    .vi-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+    .vi-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--gradient-success);
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">Belwo Lead Gen</div>
+        <div class="sidebar-tag">AI-Powered Outreach</div>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li>
+          <button class="active" onclick="showPanel('config')">
+            <span class="nav-icon">⚙️</span>
+            Configuration
+          </button>
+        </li>
+        <li>
+          <button onclick="showPanel('leads')">
+            <span class="nav-icon">🎯</span>
+            Find Leads
+          </button>
+        </li>
+        <li>
+          <button onclick="showPanel('saved')">
+            <span class="nav-icon">💾</span>
+            Saved Messages
+          </button>
+        </li>
+        <li>
+          <button onclick="showPanel('painpoint')">
+            <span class="nav-icon">🔍</span>
+            Pain Point Analysis
+          </button>
+        </li>
+        <li>
+          <button onclick="showPanel('sites')">
+            <span class="nav-icon">🌐</span>
+            Manage Sites
+          </button>
+        </li>
+        <li>
+          <button onclick="showPanel('analytics')">
+            <span class="nav-icon">📊</span>
+            Visitor Intelligence
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        Built for <a href="https://www.belwo.com" target="_blank">Belwo</a><br>
+        Powered by OpenRouter AI
+      </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <main class="main">
+
+      <!-- ═══ CONFIG PANEL ═══ -->
+      <div class="panel active" id="panel-config">
+        <div class="page-header">
+          <div class="page-eyebrow">Setup</div>
+          <h1 class="page-title">Configure <em>AI Engine</em></h1>
+          <p class="page-desc">Connect your OpenRouter API key to power AI-generated lead discovery and personalized outreach messages. Choose from 8+ advanced language models.</p>
+        </div>
+
+        <div id="config-status" class="status-bar"></div>
+
+        <div class="card">
+          <div class="card-title">API Configuration</div>
+          <div class="card-subtitle">Your key is stored in-memory only and never persisted. Get your OpenRouter key at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a></div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label">OpenRouter API Key</label>
+              <input type="password" id="apiKey" class="form-input mono" placeholder="sk-or-v1-...">
+            </div>
+            <div class="form-group full">
+              <label class="form-label">AI Model Selection</label>
+              <select id="modelSelect" class="form-input"></select>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveConfig()">
+            <span>💾</span>
+            Save Configuration
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">About Belwo</div>
+          <div class="card-subtitle">Your CCM consulting services</div>
+          <div style="font-size:14px;color:var(--text-secondary);line-height:1.8;">
+            <p style="margin-bottom:12px;"><strong style="color:var(--text-primary);">Belwo</strong> is a Customer Communications Management (CCM) consulting firm with <strong style="color:var(--cyan);">20 years of experience</strong> helping enterprises modernize their customer communication infrastructure.</p>
+            <p style="margin-bottom:16px;">Services include:</p>
+            <ul style="margin-left:24px;margin-bottom:16px;list-style:none;">
+              <li style="margin-bottom:8px;">→ CCM platform implementation (Quadient, OpenText, SmartComm, Solimar)</li>
+              <li style="margin-bottom:8px;">→ Document automation and output management</li>
+              <li style="margin-bottom:8px;">→ Application migration and system integration</li>
+              <li style="margin-bottom:8px;">→ Managed services for customer communications</li>
+            </ul>
+            <p><strong style="color:var(--text-primary);">Target clients:</strong> Banking, Insurance, Healthcare, Government, Utilities, and large enterprises needing to modernize customer communications.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ FIND LEADS PANEL ═══ -->
+      <div class="panel" id="panel-leads">
+        <div class="page-header">
+          <div class="page-eyebrow">Discovery</div>
+          <h1 class="page-title">Find <em>Decision Makers</em></h1>
+          <p class="page-desc">AI discovers real decision-makers at target companies, extracts contact info, and generates personalized outreach messages.</p>
+        </div>
+
+        <div id="leads-status" class="status-bar"></div>
+
+        <div class="card">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label">Target Industry</label>
+              <select id="industrySelect" class="form-input"></select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Custom Keywords (Optional)</label>
+              <input type="text" id="customKeywords" class="form-input" placeholder="e.g., regional bank, health insurance, municipal government">
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="findBtn" onclick="findLeads()">
+              <span>🎯</span>
+              Find Decision Makers
+            </button>
+            <button class="btn btn-secondary" id="loadMoreBtn" onclick="loadMoreLeads()" style="display:none;">
+              Load More Leads
+            </button>
+            <button class="btn btn-secondary btn-sm" id="exportLeadsBtn" onclick="exportLeads()" style="display:none;">
+              <span>📊</span>
+              Export to Excel
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="resetSearch()">
+              Reset Search
+            </button>
+          </div>
+          <div id="search-info" style="margin-top:16px;font-size:13px;color:var(--text-muted);display:none;"></div>
+        </div>
+
+        <div id="leads-list"></div>
+      </div>
+
+      <!-- ═══ SAVED MESSAGES PANEL ═══ -->
+      <div class="panel" id="panel-saved">
+        <div class="page-header">
+          <div class="page-eyebrow">History</div>
+          <h1 class="page-title">Saved <em>Messages</em></h1>
+          <p class="page-desc">All generated LinkedIn and email messages for your leads.</p>
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <button class="btn btn-primary btn-sm" id="exportMessagesBtn" onclick="exportMessages()" style="display:none;">
+            <span>📊</span>
+            Export Messages to Excel
+          </button>
+        </div>
+
+        <div class="card" id="saved-card">
+          <table class="data-table" id="saved-table">
+            <thead>
+              <tr>
+                <th>Lead</th>
+                <th>Company</th>
+                <th>Type</th>
+                <th>Generated</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="saved-tbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:48px;">No messages generated yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ PAIN POINT ANALYSIS PANEL ═══ -->
+      <div class="panel" id="panel-painpoint">
+        <div class="page-header">
+          <div class="page-eyebrow">Research</div>
+          <h1 class="page-title">Pain Point <em>Analysis</em></h1>
+          <p class="page-desc">Enter company details manually to conduct deep industry research, identify CCM pain points, and generate personalized messaging strategies.</p>
+        </div>
+
+        <div id="painpoint-status" class="status-bar"></div>
+
+        <!-- INPUT FORM -->
+        <div class="card" id="pp-form-card">
+          <div class="card-title">Company Information</div>
+          <div class="card-subtitle">Enter target company details for comprehensive pain point analysis</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Company Name *</label>
+              <input type="text" id="pp-company-name" class="form-input" placeholder="e.g., Blue Cross Blue Shield">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Industry *</label>
+              <select id="pp-industry" class="form-input"></select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Company Website (Optional)</label>
+              <input type="url" id="pp-website" class="form-input" placeholder="https://example.com">
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Additional Context (Optional)</label>
+              <textarea id="pp-context" class="form-input" placeholder="Recent news, known challenges, technology stack, transformation initiatives, specific pain points you've heard about..."></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="analyzePainPoints()" id="analyze-btn">
+            <span>🔍</span>
+            Analyze Pain Points
+          </button>
+        </div>
+
+        <!-- RESULTS (hidden until analysis completes) -->
+        <div id="painpoint-results" style="display:none;">
+
+          <!-- Stats Overview -->
+          <div class="stats-row" id="analysis-stats"></div>
+
+          <!-- Industry Research -->
+          <div class="card">
+            <div class="card-title">Industry & Company Research</div>
+            <div id="research-content" style="font-size:14px;color:var(--text-secondary);line-height:1.8;"></div>
+          </div>
+
+          <!-- Pain Points -->
+          <div class="card">
+            <div class="card-title">Identified Pain Points</div>
+            <div class="card-subtitle">Critical CCM challenges mapped to Belwo solutions</div>
+            <div id="pain-points-grid"></div>
+          </div>
+
+          <!-- Messaging Angles -->
+          <div class="card">
+            <div class="card-title">Messaging Angles</div>
+            <div class="card-subtitle">Strategic positioning for outreach</div>
+            <div id="messaging-angles"></div>
+          </div>
+
+          <!-- Outreach Templates -->
+          <div class="card">
+            <div class="card-title">Ready-to-Use Outreach Templates</div>
+            <div class="card-subtitle">Copy and paste into LinkedIn or email</div>
+            <div id="outreach-templates"></div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display:flex;gap:12px;margin-top:24px;">
+            <button class="btn btn-primary btn-sm" onclick="exportAnalysis()">
+              <span>📊</span>
+              Export Analysis to Excel
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="resetPainPointForm()">
+              Analyze Another Company
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ MANAGE SITES PANEL ═══ -->
+      <div class="panel" id="panel-sites">
+        <div class="page-header">
+          <div class="page-eyebrow">Tracking</div>
+          <h1 class="page-title">Manage <em>Sites</em></h1>
+          <p class="page-desc">Register websites to track visitors. Each site gets a unique tracking snippet to embed.</p>
+        </div>
+
+        <div id="sites-status" class="status-bar"></div>
+
+        <div class="card">
+          <div class="card-title">Register New Site</div>
+          <div class="card-subtitle">Add a website to start tracking its visitors</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Site Name</label>
+              <input type="text" id="site-name" class="form-input" placeholder="e.g., Belwo Website">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Domain</label>
+              <input type="text" id="site-domain" class="form-input" placeholder="e.g., belwo.com">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="registerSite()">
+            <span>🌐</span>
+            Register Site
+          </button>
+        </div>
+
+        <div id="sites-list"></div>
+      </div>
+
+      <!-- ═══ VISITOR INTELLIGENCE PANEL ═══ -->
+      <div class="panel" id="panel-analytics">
+        <div class="page-header">
+          <div class="page-eyebrow">Intelligence</div>
+          <h1 class="page-title">Visitor <em>Intelligence</em></h1>
+          <p class="page-desc">Real-time visitor tracking, identification, and engagement analytics across your websites.</p>
+        </div>
+
+        <div id="analytics-status" class="status-bar"></div>
+
+        <!-- Filters -->
+        <div class="card" style="padding:16px 20px;">
+          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+            <div>
+              <label class="form-label" style="margin-bottom:4px;">Site</label>
+              <select id="vi-site-filter" class="form-input" style="min-width:200px;" onchange="loadDashboard()">
+                <option value="">All Sites</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" style="margin-bottom:4px;">Period</label>
+              <select id="vi-period-filter" class="form-input" style="min-width:140px;" onchange="loadDashboard()">
+                <option value="today">Today</option>
+                <option value="7d" selected>Last 7 Days</option>
+                <option value="30d">Last 30 Days</option>
+                <option value="all">All Time</option>
+              </select>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+              <button class="btn btn-secondary btn-sm" onclick="loadDashboard()">Refresh</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportVisitors()">
+                <span>📊</span> Export Visitors
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row" id="vi-stats"></div>
+
+        <!-- Live Visitors -->
+        <div class="card">
+          <div class="card-title">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:8px;animation:pulse-green 2s infinite;"></span>
+            Live Visitors
+          </div>
+          <div class="card-subtitle">Active in the last 5 minutes</div>
+          <div id="vi-live-visitors">
+            <div style="text-align:center;padding:32px;color:var(--text-muted);">No active visitors right now</div>
+          </div>
+        </div>
+
+        <!-- Identified Visitors -->
+        <div class="card">
+          <div class="card-title" style="color:var(--cyan);">Identified Visitors</div>
+          <div class="card-subtitle">Leads who clicked tracked outreach links</div>
+          <div id="vi-identified">
+            <div style="text-align:center;padding:32px;color:var(--text-muted);">No identified visitors yet. Generate tracked links in your outreach!</div>
+          </div>
+        </div>
+
+        <!-- Two column: Top Pages + Top Referrers -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div class="card">
+            <div class="card-title">Top Pages</div>
+            <div id="vi-top-pages">
+              <div style="text-align:center;padding:24px;color:var(--text-muted);">No data yet</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Top Referrers</div>
+            <div id="vi-top-referrers">
+              <div style="text-align:center;padding:24px;color:var(--text-muted);">No data yet</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Visitors -->
+        <div class="card">
+          <div class="card-title">Recent Visitors</div>
+          <div class="card-subtitle">All visitors sorted by most recent activity</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Visitor</th>
+                <th>Company / ISP</th>
+                <th>Location</th>
+                <th>Pages</th>
+                <th>Score</th>
+                <th>Last Seen</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="vi-recent-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:48px;">No visitors tracked yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tracked Links -->
+        <div class="card">
+          <div class="card-title">Tracked Outreach Links</div>
+          <div class="card-subtitle">Links generated for outreach messages — clicks identify visitors</div>
+          <div style="margin-bottom:16px;">
+            <button class="btn btn-primary btn-sm" onclick="showCreateLinkForm()">
+              + Create Tracked Link
+            </button>
+          </div>
+          <div id="vi-create-link-form" style="display:none;margin-bottom:20px;padding:16px;background:rgba(94,234,212,0.05);border:1px solid rgba(94,234,212,0.15);border-radius:8px;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Destination URL *</label>
+                <input type="url" id="tl-url" class="form-input" placeholder="https://belwo.com/services">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Lead Name</label>
+                <input type="text" id="tl-name" class="form-input" placeholder="John Smith">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Lead Email</label>
+                <input type="email" id="tl-email" class="form-input" placeholder="john@company.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Lead Company</label>
+                <input type="text" id="tl-company" class="form-input" placeholder="Acme Corp">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Lead Title</label>
+                <input type="text" id="tl-title" class="form-input" placeholder="CTO">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Message Type</label>
+                <select id="tl-type" class="form-input">
+                  <option value="email">Email</option>
+                  <option value="linkedin">LinkedIn</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-primary btn-sm" onclick="createTrackedLink()">Create Link</button>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('vi-create-link-form').style.display='none'">Cancel</button>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Lead</th>
+                <th>Destination</th>
+                <th>Type</th>
+                <th>Clicks</th>
+                <th>Created</th>
+                <th>Tracked URL</th>
+              </tr>
+            </thead>
+            <tbody id="vi-links-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:48px;">No tracked links yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Visitor Detail Modal -->
+        <div id="vi-visitor-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;overflow-y:auto;padding:40px;">
+          <div style="max-width:800px;margin:0 auto;background:var(--bg-elevated);border:1px solid var(--glass-border);border-radius:16px;padding:32px;position:relative;">
+            <button onclick="closeVisitorModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:24px;cursor:pointer;">&times;</button>
+            <div id="vi-modal-content"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ═══ STATE ═══
+    let leads = [];
+    let savedMessages = [];
+    let searchPage = 1;
+
+    // Load industries on startup
+    async function loadIndustries() {
+      try {
+        const res = await fetch('/api/industries');
+        const data = await res.json();
+        const select = document.getElementById('industrySelect');
+        select.innerHTML = data.industries.map(i =>
+          `<option value="${i.id}" title="${i.description}">${i.label}</option>`
+        ).join('');
+      } catch (e) { console.error('Failed to load industries', e); }
+    }
+    loadIndustries();
+
+    // ═══ NAVIGATION ═══
+    function showPanel(name) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + name).classList.add('active');
+      document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      if (name === 'saved') loadSavedMessages();
+      if (name === 'sites') loadSites();
+      if (name === 'analytics') { loadSiteFilter(); loadDashboard(); startSSE(); }
+    }
+
+    function setStatus(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = 'status-bar show ' + type;
+      el.innerHTML = (type === 'loading' ? '<span class="spinner"></span> ' : '') + msg;
+    }
+
+    function hideStatus(id) {
+      document.getElementById(id).className = 'status-bar';
+    }
+
+    // ═══ LOAD MODELS ═══
+    async function loadModels() {
+      try {
+        const res = await fetch('/api/models');
+        const data = await res.json();
+        const select = document.getElementById('modelSelect');
+        select.innerHTML = data.models.map(m =>
+          `<option value="${m.id}" ${m.id === data.selected ? 'selected' : ''}>${m.name} (${m.cost})</option>`
+        ).join('');
+      } catch (e) { console.error('Failed to load models', e); }
+    }
+    loadModels();
+
+    // ═══ CONFIG ═══
+    async function saveConfig() {
+      const apiKey = document.getElementById('apiKey').value;
+      const model = document.getElementById('modelSelect').value;
+      if (!apiKey) {
+        setStatus('config-status', 'error', 'Please enter your OpenRouter API key');
+        return;
+      }
+      setStatus('config-status', 'loading', 'Saving configuration...');
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey, model }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setStatus('config-status', 'success', data.message + ' Ready to find leads!');
+        } else {
+          setStatus('config-status', 'error', data.error);
+        }
+      } catch (e) {
+        setStatus('config-status', 'error', 'Connection error: ' + e.message);
+      }
+    }
+
+    // ═══ FIND LEADS ═══
+    async function findLeads(append = false) {
+      if (!append) { searchPage = 1; leads = []; }
+      const btn = append ? document.getElementById('loadMoreBtn') : document.getElementById('findBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> ' + (append ? 'Loading...' : 'Finding...');
+      const industry = document.getElementById('industrySelect').value;
+      const customKeywords = document.getElementById('customKeywords').value;
+      setStatus('leads-status', 'loading', `AI discovering decision makers → scraping contact info (~30-60s)`);
+
+      try {
+        const res = await fetch('/api/find-leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            industry,
+            customKeywords,
+            page: searchPage,
+          }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        const newLeads = data.leads || [];
+        if (append) {
+          leads = [...leads, ...newLeads];
+        } else {
+          leads = newLeads;
+        }
+        searchPage++;
+        renderLeads();
+
+        const verifiedCount = newLeads.filter(l => l.verified).length;
+        document.getElementById('loadMoreBtn').style.display = 'inline-flex';
+        document.getElementById('search-info').style.display = 'block';
+        document.getElementById('search-info').textContent = `Found ${leads.length} total leads across ${searchPage - 1} search(es). ${data.totalPreviouslySearched || 0} companies tracked.`;
+        setStatus('leads-status', 'success', `Found ${newLeads.length} decision makers — ${verifiedCount} verified!`);
+      } catch (e) {
+        setStatus('leads-status', 'error', e.message);
+      }
+      btn.disabled = false;
+      btn.innerHTML = append ? 'Load More Leads' : '<span>🎯</span> Find Decision Makers';
+    }
+
+    function loadMoreLeads() { findLeads(true); }
+
+    async function resetSearch() {
+      try {
+        await fetch('/api/reset-search', { method: 'POST' });
+        leads = [];
+        searchPage = 1;
+        document.getElementById('leads-list').innerHTML = '';
+        document.getElementById('loadMoreBtn').style.display = 'none';
+        document.getElementById('search-info').style.display = 'none';
+        setStatus('leads-status', 'info', 'Search history reset. Next search starts fresh.');
+      } catch (e) { setStatus('leads-status', 'error', e.message); }
+    }
+
+    function renderLeads() {
+      const container = document.getElementById('leads-list');
+      if (!leads.length) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = leads.map((lead, i) => {
+        const scrapedEmails = lead.scrapedEmails || [];
+        return `
+        <div class="lead-card">
+          <div class="lead-header">
+            <div style="flex:1;">
+              <div class="lead-company">${esc(lead.company)}</div>
+              <div class="lead-person"><strong>${esc(lead.name)}</strong></div>
+              <div class="lead-title">${esc(lead.title)}</div>
+            </div>
+            <span class="badge badge-${lead.relevance >= 8 ? 'green' : lead.relevance >= 6 ? 'blue' : 'orange'}">${lead.relevance}/10 FIT</span>
+          </div>
+
+          <div class="lead-meta">
+            <span class="badge badge-purple">${esc(lead.industry)}</span>
+            <span class="badge badge-blue">${esc(lead.companySize)}</span>
+            <span style="font-size:12px;color:var(--text-muted);">📍 ${esc(lead.location)}</span>
+          </div>
+
+          <div style="padding:12px 16px;background:rgba(94,234,212,0.05);border-radius:8px;margin:12px 0;border-left:2px solid var(--cyan);">
+            <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Pain Point</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">${esc(lead.painPoint)}</div>
+          </div>
+
+          <div class="lead-info">
+            <div class="lead-info-label">Email:</div>
+            <div class="lead-info-value">${esc(lead.email)}</div>
+
+            <div class="lead-info-label">LinkedIn:</div>
+            <div class="lead-info-value"><a href="${esc(lead.linkedinUrl)}" target="_blank">${esc(lead.linkedinUrl)}</a></div>
+
+            <div class="lead-info-label">Website:</div>
+            <div class="lead-info-value"><a href="${esc(lead.companyWebsite)}" target="_blank">${esc(lead.companyWebsite)}</a></div>
+          </div>
+
+          ${scrapedEmails.length > 0 ? `
+            <div style="padding:10px 14px;background:rgba(94,234,212,0.08);border-radius:8px;margin:12px 0;">
+              <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Additional Emails Found</div>
+              ${scrapedEmails.map(e => `<div style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);">${esc(e)}</div>`).join('')}
+            </div>
+          ` : ''}
+
+          <div class="lead-actions">
+            <button class="btn btn-primary btn-sm" onclick="generateMessage(${i}, 'linkedin')" id="linkedin-btn-${i}">
+              <span>💼</span>
+              Generate LinkedIn Message
+            </button>
+            <button class="btn btn-purple btn-sm" onclick="generateMessage(${i}, 'email')" id="email-btn-${i}">
+              <span>📧</span>
+              Generate Email
+            </button>
+          </div>
+
+          <div id="message-preview-${i}"></div>
+        </div>`;
+      }).join('');
+    }
+
+    // ═══ GENERATE MESSAGE ═══
+    async function generateMessage(idx, messageType) {
+      const btn = document.getElementById(`${messageType}-btn-${idx}`);
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      try {
+        const res = await fetch('/api/generate-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lead: leads[idx],
+            messageType,
+            senderName: 'Business Development @ Belwo',
+          }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        leads[idx][`${messageType}Message`] = data;
+
+        const messageId = `message-${idx}-${messageType}`;
+        const messageDisplay = messageType === 'linkedin'
+          ? `<div class="message-body">${esc(data.message)}</div>`
+          : `<div class="message-subject"><strong>Subject:</strong> ${esc(data.subject)}</div>
+             <div class="message-body" style="margin-top:12px;">${esc(data.body)}</div>`;
+
+        document.getElementById('message-preview-' + idx).innerHTML = `
+          <div class="message-preview" id="${messageId}">
+            <button class="copy-btn" onclick="copyMessage('${messageId}', this)">📋 Copy</button>
+            <div class="message-type">${messageType === 'linkedin' ? 'LinkedIn Message' : 'Email'}</div>
+            ${messageDisplay}
+          </div>
+        `;
+
+        // Save to history
+        await fetch('/api/save-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lead: leads[idx],
+            message: data,
+            messageType,
+            status: 'generated',
+          }),
+        });
+
+      } catch (e) {
+        document.getElementById('message-preview-' + idx).innerHTML = `<div class="status-bar show error">${e.message}</div>`;
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = messageType === 'linkedin'
+        ? '<span>💼</span> Regenerate LinkedIn Message'
+        : '<span>📧</span> Regenerate Email';
+    }
+
+    // ═══ COPY MESSAGE ═══
+    function copyMessage(messageId, btn) {
+      const messageEl = document.getElementById(messageId);
+      const subjectEl = messageEl.querySelector('.message-subject');
+      const bodyEl = messageEl.querySelector('.message-body');
+
+      let textToCopy = '';
+      if (subjectEl) {
+        textToCopy = subjectEl.textContent.trim() + '\n\n' + bodyEl.textContent.trim();
+      } else {
+        textToCopy = bodyEl.textContent.trim();
+      }
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        btn.textContent = '✅ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋 Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+        btn.textContent = '❌ Failed';
+      });
+    }
+
+    // ═══ SAVED MESSAGES ═══
+    async function loadSavedMessages() {
+      try {
+        const res = await fetch('/api/saved-messages');
+        const data = await res.json();
+        const tbody = document.getElementById('saved-tbody');
+
+        if (!data.messages?.length) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:48px;">No messages generated yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.messages.map(m => `
+          <tr>
+            <td style="font-weight:600;color:var(--text-primary);">${esc(m.lead?.name || '—')}</td>
+            <td style="color:var(--text-secondary);">${esc(m.lead?.company || '—')}</td>
+            <td><span class="badge ${m.messageType === 'linkedin' ? 'badge-blue' : 'badge-purple'}">${m.messageType}</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">${new Date(m.savedAt).toLocaleString()}</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="viewMessage(${JSON.stringify(m).replace(/"/g, '&quot;')})">View</button></td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function viewMessage(msg) {
+      const messageDisplay = msg.messageType === 'linkedin'
+        ? msg.message.message
+        : `Subject: ${msg.message.subject}\n\n${msg.message.body}`;
+
+      alert(`Message for ${msg.lead.name} at ${msg.lead.company}\n\n${messageDisplay}`);
+    }
+
+    // ═══ EXPORT FUNCTIONS ═══
+    async function exportLeads() {
+      if (!leads.length) {
+        alert('No leads to export');
+        return;
+      }
+
+      const btn = document.getElementById('exportLeadsBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Exporting...';
+
+      try {
+        const res = await fetch('/api/export-leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ leads }),
+        });
+
+        if (!res.ok) throw new Error('Export failed');
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Belwo_Leads_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        setStatus('leads-status', 'success', `Exported ${leads.length} leads to Excel!`);
+      } catch (e) {
+        setStatus('leads-status', 'error', 'Export failed: ' + e.message);
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<span>📊</span> Export to Excel';
+    }
+
+    async function exportMessages() {
+      const btn = document.getElementById('exportMessagesBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Exporting...';
+
+      try {
+        const res = await fetch('/api/export-messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Export failed');
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Belwo_Messages_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        alert('Messages exported to Excel successfully!');
+      } catch (e) {
+        alert('Export failed: ' + e.message);
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<span>📊</span> Export Messages to Excel';
+    }
+
+    // ═══ PAIN POINT ANALYSIS ═══
+    let currentAnalysis = null;
+
+    // Initialize industry dropdown for pain point panel
+    async function initPainPointPanel() {
+      try {
+        const res = await fetch('/api/industries');
+        const data = await res.json();
+        const select = document.getElementById('pp-industry');
+        select.innerHTML = data.industries.map(i =>
+          `<option value="${i.id}">${i.label}</option>`
+        ).join('');
+      } catch (e) { console.error('Failed to load pain point industries', e); }
+    }
+    initPainPointPanel();
+
+    async function analyzePainPoints() {
+      const companyName = document.getElementById('pp-company-name').value.trim();
+      const industry = document.getElementById('pp-industry').value;
+      const website = document.getElementById('pp-website').value.trim();
+      const context = document.getElementById('pp-context').value.trim();
+
+      if (!companyName || !industry) {
+        setStatus('painpoint-status', 'error', 'Please enter company name and select industry');
+        return;
+      }
+
+      const btn = document.getElementById('analyze-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Analyzing...';
+      setStatus('painpoint-status', 'loading', 'Step 1/4: Conducting industry & company research...');
+
+      const steps = [
+        'Step 2/4: Identifying CCM pain points...',
+        'Step 3/4: Generating messaging angles...',
+        'Step 4/4: Creating outreach templates...'
+      ];
+      let stepIdx = 0;
+      const progressInterval = setInterval(() => {
+        if (stepIdx < steps.length) {
+          setStatus('painpoint-status', 'loading', steps[stepIdx]);
+          stepIdx++;
+        }
+      }, 15000);
+
+      try {
+        const res = await fetch('/api/analyze-painpoints', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyName, industry, website, context }),
+        });
+
+        clearInterval(progressInterval);
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Analysis failed');
+        }
+
+        currentAnalysis = await res.json();
+        renderAnalysisResults(currentAnalysis);
+        setStatus('painpoint-status', 'success', `Complete analysis for ${esc(companyName)} finished!`);
+
+        document.getElementById('painpoint-results').style.display = 'block';
+        document.getElementById('pp-form-card').style.display = 'none';
+      } catch (err) {
+        clearInterval(progressInterval);
+        setStatus('painpoint-status', 'error', err.message);
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<span>🔍</span> Analyze Pain Points';
+    }
+
+    function renderAnalysisResults(analysis) {
+      // Stats
+      const ppCount = analysis.painPoints?.painPoints?.length || 0;
+      const anglesCount = analysis.messaging?.angles?.length || 0;
+      const templatesCount = analysis.templates?.templates?.length || 0;
+
+      document.getElementById('analysis-stats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Company</div>
+          <div class="stat-value" style="font-size:22px;">${esc(analysis.companyName)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Industry</div>
+          <div class="stat-value" style="font-size:22px;">${esc(analysis.industry)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pain Points</div>
+          <div class="stat-value">${ppCount}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Templates</div>
+          <div class="stat-value">${templatesCount}</div>
+        </div>
+      `;
+
+      // Research
+      document.getElementById('research-content').innerHTML =
+        (analysis.research || '').split('\n\n').map(p =>
+          p.trim() ? `<p style="margin-bottom:16px;">${esc(p.trim())}</p>` : ''
+        ).join('');
+
+      // Pain Points
+      const painPoints = analysis.painPoints?.painPoints || [];
+      document.getElementById('pain-points-grid').innerHTML = painPoints.map(pp => {
+        const severityColor = pp.severity === 'Critical' ? 'orange' : pp.severity === 'High' ? 'purple' : 'blue';
+        return `
+        <div style="
+          background:rgba(94,234,212,0.05);
+          border:1px solid rgba(94,234,212,0.15);
+          border-left:3px solid var(--cyan);
+          border-radius:12px;
+          padding:24px;
+          margin-bottom:16px;
+        ">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+            <div style="flex:1;">
+              <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">
+                ${esc(pp.title)}
+              </div>
+              <span class="badge badge-${severityColor}">${esc(pp.severity)} PRIORITY</span>
+            </div>
+            <div style="font-size:28px;">${pp.icon || '🔸'}</div>
+          </div>
+          <div style="font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;">
+            ${esc(pp.description)}
+          </div>
+          <div style="background:rgba(15,21,37,0.6);border-radius:8px;padding:16px;margin-top:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
+              Belwo Solution
+            </div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+              ${esc(pp.belwoSolution)}
+            </div>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-muted);">
+            <strong>Impact:</strong> ${esc(pp.businessImpact)}
+          </div>
+        </div>`;
+      }).join('');
+
+      // Messaging Angles
+      const angles = analysis.messaging?.angles || [];
+      document.getElementById('messaging-angles').innerHTML = angles.map(angle => `
+        <div style="
+          background:var(--glass-bg);
+          border:1px solid var(--glass-border);
+          border-radius:12px;
+          padding:20px;
+          margin-bottom:16px;
+        ">
+          <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">
+            ${esc(angle.headline)}
+          </div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;">
+            ${esc(angle.description)}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${(angle.keyPoints || []).map(kp => `
+              <span style="
+                padding:6px 12px;
+                background:rgba(94,234,212,0.1);
+                border-radius:6px;
+                font-size:12px;
+                color:var(--cyan);
+              ">${esc(kp)}</span>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      // Outreach Templates
+      const templates = analysis.templates?.templates || [];
+      document.getElementById('outreach-templates').innerHTML = templates.map(t => `
+        <div class="message-preview" id="pp-template-${esc(t.id)}">
+          <button class="copy-btn" onclick="copyMessage('pp-template-${esc(t.id)}', this)">📋 Copy</button>
+          <div class="message-type">${esc(t.type)}</div>
+          ${t.subject ? `<div class="message-subject"><strong>Subject:</strong> ${esc(t.subject)}</div>` : ''}
+          <div class="message-body" style="margin-top:12px;">${esc(t.body)}</div>
+        </div>
+      `).join('');
+    }
+
+    function resetPainPointForm() {
+      document.getElementById('pp-company-name').value = '';
+      document.getElementById('pp-website').value = '';
+      document.getElementById('pp-context').value = '';
+      document.getElementById('painpoint-results').style.display = 'none';
+      document.getElementById('pp-form-card').style.display = 'block';
+      hideStatus('painpoint-status');
+      currentAnalysis = null;
+    }
+
+    async function exportAnalysis() {
+      if (!currentAnalysis) {
+        setStatus('painpoint-status', 'error', 'No analysis to export');
+        return;
+      }
+
+      const exportData = {
+        company: currentAnalysis.companyName,
+        industry: currentAnalysis.industry,
+        analyzedAt: new Date(currentAnalysis.analyzedAt).toLocaleString(),
+        research: currentAnalysis.research,
+        painPoints: currentAnalysis.painPoints?.painPoints || [],
+        messagingAngles: currentAnalysis.messaging?.angles || [],
+        templates: currentAnalysis.templates?.templates || [],
+      };
+
+      try {
+        const res = await fetch('/api/export-analysis', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(exportData),
+        });
+
+        if (!res.ok) throw new Error('Export failed');
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Belwo_PainPoint_${currentAnalysis.companyName.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        setStatus('painpoint-status', 'success', 'Analysis exported to Excel!');
+      } catch (err) {
+        setStatus('painpoint-status', 'error', 'Export failed: ' + err.message);
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // ═══ VISITOR INTELLIGENCE ═══
+    // ═══════════════════════════════════════════════════════════
+
+    let viSSE = null;
+
+    // ─── Site Management ───
+
+    async function registerSite() {
+      const name = document.getElementById('site-name').value.trim();
+      const domain = document.getElementById('site-domain').value.trim();
+      if (!name || !domain) {
+        setStatus('sites-status', 'error', 'Please enter site name and domain');
+        return;
+      }
+      try {
+        const res = await fetch('/api/vi/sites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, domain })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        setStatus('sites-status', 'success', `Site "${name}" registered! Copy the tracking snippet below.`);
+        document.getElementById('site-name').value = '';
+        document.getElementById('site-domain').value = '';
+        loadSites();
+      } catch (e) {
+        setStatus('sites-status', 'error', e.message);
+      }
+    }
+
+    async function loadSites() {
+      try {
+        const res = await fetch('/api/vi/sites');
+        const data = await res.json();
+        const container = document.getElementById('sites-list');
+        if (!data.sites?.length) {
+          container.innerHTML = '<div class="card" style="text-align:center;padding:48px;color:var(--text-muted);">No sites registered yet. Add your first website above.</div>';
+          return;
+        }
+        container.innerHTML = data.sites.map(site => `
+          <div class="card" style="margin-top:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+              <div>
+                <div class="card-title">${esc(site.name)}</div>
+                <div class="card-subtitle">${esc(site.domain)} — ${site.visitorCount || 0} visitors, ${site.pageviewCount || 0} pageviews</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="deleteSite('${esc(site.siteId)}')" style="color:#ef4444;">Delete</button>
+            </div>
+            <div style="margin-top:16px;">
+              <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Tracking Snippet — paste in your website's &lt;head&gt;</div>
+              <div style="position:relative;">
+                <pre style="background:var(--bg-deep);border:1px solid var(--glass-border);border-radius:8px;padding:16px;font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);overflow-x:auto;white-space:pre-wrap;word-break:break-all;">${esc(site.trackingSnippet)}</pre>
+                <button class="copy-btn" onclick="copyText('${esc(site.trackingSnippet)}', this)" style="position:absolute;top:8px;right:8px;">📋 Copy</button>
+              </div>
+            </div>
+            <div style="margin-top:12px;font-size:12px;color:var(--text-muted);">
+              Site ID: <code style="font-family:var(--font-mono);color:var(--text-secondary);">${esc(site.siteId)}</code> — Created: ${new Date(site.createdAt).toLocaleDateString()}
+            </div>
+          </div>
+        `).join('');
+      } catch (e) { console.error('Failed to load sites:', e); }
+    }
+
+    async function deleteSite(siteId) {
+      if (!confirm('Delete this site and stop tracking?')) return;
+      try {
+        await fetch('/api/vi/sites/' + siteId, { method: 'DELETE' });
+        loadSites();
+      } catch (e) { console.error(e); }
+    }
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+      });
+    }
+
+    // ─── Dashboard ───
+
+    async function loadSiteFilter() {
+      try {
+        const res = await fetch('/api/vi/sites');
+        const data = await res.json();
+        const select = document.getElementById('vi-site-filter');
+        const current = select.value;
+        select.innerHTML = '<option value="">All Sites</option>' +
+          (data.sites || []).map(s => `<option value="${esc(s.siteId)}">${esc(s.name)}</option>`).join('');
+        if (current) select.value = current;
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadDashboard() {
+      const siteId = document.getElementById('vi-site-filter').value;
+      const period = document.getElementById('vi-period-filter').value;
+
+      try {
+        const [dashRes, liveRes, linksRes] = await Promise.all([
+          fetch(`/api/vi/dashboard?siteId=${siteId}&period=${period}`),
+          fetch(`/api/vi/live?siteId=${siteId}`),
+          fetch(`/api/vi/tracked-links?siteId=${siteId}`)
+        ]);
+        const dash = await dashRes.json();
+        const live = await liveRes.json();
+        const links = await linksRes.json();
+
+        renderDashboard(dash, live, links);
+      } catch (e) {
+        console.error('Dashboard load failed:', e);
+      }
+    }
+
+    function renderDashboard(dash, live, links) {
+      // Stats row
+      document.getElementById('vi-stats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Total Visitors</div>
+          <div class="stat-value">${dash.totalVisitors || 0}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Identified</div>
+          <div class="stat-value" style="color:var(--cyan);">${dash.identifiedVisitors || 0}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pageviews</div>
+          <div class="stat-value">${dash.totalPageviews || 0}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Live Now</div>
+          <div class="stat-value" style="color:#22c55e;">${dash.activeNow || 0}</div>
+        </div>
+      `;
+
+      // Live visitors
+      const liveContainer = document.getElementById('vi-live-visitors');
+      if (live.activeVisitors?.length) {
+        liveContainer.innerHTML = live.activeVisitors.map(v => `
+          <div class="vi-live-row">
+            <div class="vi-avatar ${v.identified ? 'identified' : 'anonymous'}">${v.identified ? (v.identity?.name?.[0] || 'I') : '?'}</div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:600;color:${v.identified ? 'var(--cyan)' : 'var(--text-primary)'};">
+                ${v.identified ? esc(v.identity?.name || 'Identified') : 'Anonymous Visitor'}
+              </div>
+              <div style="font-size:12px;color:var(--text-muted);">
+                ${v.identified ? esc(v.identity?.company || '') + ' — ' : ''}${esc(v.geo?.city || '')}${v.geo?.country ? ', ' + esc(v.geo.country) : ''}
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text-secondary);font-family:var(--font-mono);">${esc(v.currentPage || '/')}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${v.activeFor < 60 ? v.activeFor + 's' : Math.round(v.activeFor / 60) + 'm'} ago</div>
+          </div>
+        `).join('');
+      } else {
+        liveContainer.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);">No active visitors right now</div>';
+      }
+
+      // Identified visitors
+      const identContainer = document.getElementById('vi-identified');
+      if (dash.identifiedRecently?.length) {
+        identContainer.innerHTML = `<table class="data-table"><thead><tr>
+          <th>Name</th><th>Company</th><th>Title</th><th>Source</th><th>Sessions</th><th>Score</th><th>Action</th>
+        </tr></thead><tbody>${dash.identifiedRecently.map(v => `
+          <tr>
+            <td style="font-weight:600;color:var(--cyan);">${esc(v.identity?.name || '—')}</td>
+            <td>${esc(v.identity?.company || '—')}</td>
+            <td style="color:var(--text-secondary);">${esc(v.identity?.title || '—')}</td>
+            <td><span class="badge ${v.identity?.source === 'linkedin' ? 'badge-blue' : 'badge-purple'}">${esc(v.identity?.source || '—')}</span></td>
+            <td>${v.totalSessions || 0}</td>
+            <td><span class="vi-score ${(v.engagementScore||0) >= 60 ? 'high' : (v.engagementScore||0) >= 30 ? 'medium' : 'low'}">${v.engagementScore || 0}</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="viewVisitor('${esc(v.visitorId)}')">View</button></td>
+          </tr>
+        `).join('')}</tbody></table>`;
+      } else {
+        identContainer.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);">No identified visitors yet. Generate tracked links in your outreach!</div>';
+      }
+
+      // Top pages
+      const pagesContainer = document.getElementById('vi-top-pages');
+      if (dash.topPages?.length) {
+        const maxViews = dash.topPages[0].views;
+        pagesContainer.innerHTML = dash.topPages.map(p => `
+          <div style="padding:8px 0;border-bottom:1px solid var(--glass-border);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:13px;color:var(--text-primary);font-family:var(--font-mono);">${esc(p.path)}</span>
+              <span style="font-size:12px;color:var(--text-muted);">${p.views} views</span>
+            </div>
+            <div class="vi-bar"><div class="vi-bar-fill" style="width:${Math.round(p.views/maxViews*100)}%"></div></div>
+          </div>
+        `).join('');
+      } else {
+        pagesContainer.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);">No data yet</div>';
+      }
+
+      // Top referrers
+      const refContainer = document.getElementById('vi-top-referrers');
+      if (dash.topReferrers?.length) {
+        const maxRef = dash.topReferrers[0].count;
+        refContainer.innerHTML = dash.topReferrers.map(r => `
+          <div style="padding:8px 0;border-bottom:1px solid var(--glass-border);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:13px;color:var(--text-primary);">${esc(r.referrer)}</span>
+              <span style="font-size:12px;color:var(--text-muted);">${r.count}</span>
+            </div>
+            <div class="vi-bar"><div class="vi-bar-fill" style="width:${Math.round(r.count/maxRef*100)}%"></div></div>
+          </div>
+        `).join('');
+      } else {
+        refContainer.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);">No data yet</div>';
+      }
+
+      // Recent visitors
+      const recentTbody = document.getElementById('vi-recent-tbody');
+      if (dash.recentVisitors?.length) {
+        recentTbody.innerHTML = dash.recentVisitors.map(v => `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="vi-avatar ${v.identified ? 'identified' : 'anonymous'}" style="width:28px;height:28px;font-size:11px;">
+                  ${v.identified ? (v.identity?.name?.[0] || 'I') : '?'}
+                </div>
+                <span style="font-weight:600;color:${v.identified ? 'var(--cyan)' : 'var(--text-primary)'};">
+                  ${v.identified ? esc(v.identity?.name) : esc(v.visitorId.slice(0,10))}
+                </span>
+              </div>
+            </td>
+            <td style="color:var(--text-secondary);">${esc(v.identified ? v.identity?.company : v.company?.name) || '—'}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${esc(v.geo?.city || '')}${v.geo?.country ? ', ' + esc(v.geo.country) : ''}</td>
+            <td>${v.totalPageviews || 0}</td>
+            <td><span class="vi-score ${(v.engagementScore||0) >= 60 ? 'high' : (v.engagementScore||0) >= 30 ? 'medium' : 'low'}">${v.engagementScore || 0}</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">${timeAgo(v.lastSeen)}</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="viewVisitor('${esc(v.visitorId)}')">View</button></td>
+          </tr>
+        `).join('');
+      } else {
+        recentTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:48px;">No visitors tracked yet</td></tr>';
+      }
+
+      // Tracked links
+      const linksTbody = document.getElementById('vi-links-tbody');
+      if (links.links?.length) {
+        linksTbody.innerHTML = links.links.map(l => `
+          <tr>
+            <td style="font-weight:600;color:var(--text-primary);">${esc(l.leadInfo?.name || '—')}<br><span style="font-size:11px;color:var(--text-muted);">${esc(l.leadInfo?.company || '')}</span></td>
+            <td style="font-size:12px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;">${esc(l.originalUrl)}</td>
+            <td><span class="badge ${l.messageType === 'linkedin' ? 'badge-blue' : 'badge-purple'}">${esc(l.messageType)}</span></td>
+            <td style="font-weight:600;color:${l.clicks > 0 ? 'var(--cyan)' : 'var(--text-muted)'};">${l.clicks || 0}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${new Date(l.createdAt).toLocaleDateString()}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <code style="font-size:11px;color:var(--text-secondary);max-width:180px;overflow:hidden;text-overflow:ellipsis;display:block;">${esc(l.trackedUrl)}</code>
+                <button class="btn btn-secondary btn-sm" onclick="copyText('${esc(l.trackedUrl)}', this)" style="padding:2px 8px;font-size:11px;">📋</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } else {
+        linksTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:48px;">No tracked links yet</td></tr>';
+      }
+    }
+
+    // ─── Tracked Link Creation ───
+
+    function showCreateLinkForm() {
+      document.getElementById('vi-create-link-form').style.display = 'block';
+    }
+
+    async function createTrackedLink() {
+      const originalUrl = document.getElementById('tl-url').value.trim();
+      const name = document.getElementById('tl-name').value.trim();
+      const email = document.getElementById('tl-email').value.trim();
+      const company = document.getElementById('tl-company').value.trim();
+      const title = document.getElementById('tl-title').value.trim();
+      const messageType = document.getElementById('tl-type').value;
+
+      if (!originalUrl) { alert('Destination URL is required'); return; }
+
+      try {
+        const siteId = document.getElementById('vi-site-filter').value || null;
+        const res = await fetch('/api/vi/tracked-links', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            siteId,
+            originalUrl,
+            lead: { name, email, company, title },
+            messageType
+          })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        document.getElementById('vi-create-link-form').style.display = 'none';
+        document.getElementById('tl-url').value = '';
+        document.getElementById('tl-name').value = '';
+        document.getElementById('tl-email').value = '';
+        document.getElementById('tl-company').value = '';
+        document.getElementById('tl-title').value = '';
+
+        setStatus('analytics-status', 'success', `Tracked link created! URL: ${data.link.trackedUrl}`);
+        loadDashboard();
+      } catch (e) {
+        setStatus('analytics-status', 'error', e.message);
+      }
+    }
+
+    // ─── Visitor Detail Modal ───
+
+    async function viewVisitor(visitorId) {
+      const modal = document.getElementById('vi-visitor-modal');
+      const content = document.getElementById('vi-modal-content');
+      content.innerHTML = '<div style="text-align:center;padding:32px;"><span class="spinner"></span> Loading visitor details...</div>';
+      modal.style.display = 'block';
+
+      try {
+        const res = await fetch(`/api/vi/visitors/${visitorId}`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        const v = data.visitor;
+        const timeline = data.timeline || [];
+
+        content.innerHTML = `
+          <div style="display:flex;gap:20px;align-items:start;margin-bottom:24px;">
+            <div class="vi-avatar ${v.identified ? 'identified' : 'anonymous'}" style="width:56px;height:56px;font-size:22px;">
+              ${v.identified ? (v.identity?.name?.[0] || 'I') : '?'}
+            </div>
+            <div style="flex:1;">
+              <h2 style="font-family:var(--font-display);font-size:24px;color:${v.identified ? 'var(--cyan)' : 'var(--text-primary)'};margin:0;">
+                ${v.identified ? esc(v.identity?.name) : 'Anonymous Visitor'}
+              </h2>
+              ${v.identified ? `<div style="font-size:14px;color:var(--text-secondary);">${esc(v.identity?.title || '')} at ${esc(v.identity?.company || '')}</div>` : ''}
+              <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">
+                ${esc(v.geo?.city || '')}${v.geo?.region ? ', ' + esc(v.geo.region) : ''}${v.geo?.country ? ', ' + esc(v.geo.country) : ''}
+              </div>
+            </div>
+            <div class="vi-score ${(v.engagementScore||0) >= 60 ? 'high' : (v.engagementScore||0) >= 30 ? 'medium' : 'low'}" style="width:56px;height:40px;font-size:18px;">
+              ${v.engagementScore || 0}
+            </div>
+          </div>
+
+          <!-- Info Grid -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;">
+            <div style="background:rgba(94,234,212,0.05);border-radius:8px;padding:12px;text-align:center;">
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Sessions</div>
+              <div style="font-size:22px;font-weight:700;color:var(--text-primary);">${v.totalSessions || 0}</div>
+            </div>
+            <div style="background:rgba(94,234,212,0.05);border-radius:8px;padding:12px;text-align:center;">
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Pageviews</div>
+              <div style="font-size:22px;font-weight:700;color:var(--text-primary);">${v.totalPageviews || 0}</div>
+            </div>
+            <div style="background:rgba(94,234,212,0.05);border-radius:8px;padding:12px;text-align:center;">
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">First Seen</div>
+              <div style="font-size:14px;font-weight:600;color:var(--text-primary);">${new Date(v.firstSeen).toLocaleDateString()}</div>
+            </div>
+          </div>
+
+          <!-- Device / Org Info -->
+          <div style="background:var(--bg-deep);border:1px solid var(--glass-border);border-radius:8px;padding:16px;margin-bottom:24px;font-size:13px;color:var(--text-secondary);line-height:2;">
+            ${v.identified && v.identity?.email ? `<div><strong style="color:var(--text-primary);">Email:</strong> ${esc(v.identity.email)}</div>` : ''}
+            ${v.identified && v.identity?.linkedinUrl ? `<div><strong style="color:var(--text-primary);">LinkedIn:</strong> <a href="${esc(v.identity.linkedinUrl)}" target="_blank" style="color:var(--cyan);">${esc(v.identity.linkedinUrl)}</a></div>` : ''}
+            <div><strong style="color:var(--text-primary);">Organization:</strong> ${esc(v.geo?.org || v.company?.name || 'Unknown')}</div>
+            <div><strong style="color:var(--text-primary);">Browser:</strong> ${esc(v.device?.browser || '—')} on ${esc(v.device?.os || '—')}</div>
+            <div><strong style="color:var(--text-primary);">Device:</strong> ${esc(v.device?.deviceType || '—')} ${v.device?.screenResolution ? '(' + esc(v.device.screenResolution) + ')' : ''}</div>
+            <div><strong style="color:var(--text-primary);">IP:</strong> ${esc(v.geo?.ip || '—')}</div>
+          </div>
+
+          <!-- Activity Timeline -->
+          <div>
+            <h3 style="font-family:var(--font-display);font-size:16px;color:var(--text-primary);margin-bottom:16px;">Activity Timeline</h3>
+            ${timeline.length ? timeline.slice(0, 50).map(e => `
+              <div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--glass-border);font-size:13px;">
+                <div style="color:var(--text-muted);font-family:var(--font-mono);min-width:140px;font-size:11px;">
+                  ${new Date(e.timestamp).toLocaleString()}
+                </div>
+                <div>
+                  <span class="badge ${e.type === 'pageview' ? 'badge-blue' : e.type === 'click' ? 'badge-purple' : e.type === 'exit' ? 'badge-orange' : 'badge-green'}" style="font-size:10px;">${esc(e.type)}</span>
+                </div>
+                <div style="flex:1;color:var(--text-secondary);">
+                  ${e.type === 'pageview' ? esc(e.data?.path || e.data?.url || '/') :
+                    e.type === 'click' ? esc(e.data?.elementText || e.data?.elementHref || '') :
+                    e.type === 'exit' ? (e.data?.timeOnPage ? Math.round(e.data.timeOnPage/1000) + 's on page, ' : '') + (e.data?.scrollDepth ? e.data.scrollDepth + '% scrolled' : '') :
+                    ''}
+                </div>
+              </div>
+            `).join('') : '<div style="text-align:center;padding:24px;color:var(--text-muted);">No activity recorded</div>'}
+          </div>
+        `;
+      } catch (e) {
+        content.innerHTML = `<div style="color:#ef4444;padding:24px;">Failed to load visitor: ${esc(e.message)}</div>`;
+      }
+    }
+
+    function closeVisitorModal() {
+      document.getElementById('vi-visitor-modal').style.display = 'none';
+    }
+
+    // ─── SSE Real-time Updates ───
+
+    function startSSE() {
+      if (viSSE) return;
+      try {
+        viSSE = new EventSource('/api/vi/stream');
+        viSSE.onmessage = function(e) {
+          try {
+            const data = JSON.parse(e.data);
+            if (data.type === 'event') {
+              // Update live count and recent activity if analytics panel is visible
+              const panel = document.getElementById('panel-analytics');
+              if (panel.classList.contains('active')) {
+                loadDashboard();
+              }
+            }
+          } catch {}
+        };
+        viSSE.onerror = function() {
+          viSSE.close();
+          viSSE = null;
+          // Retry after 5 seconds
+          setTimeout(() => {
+            if (document.getElementById('panel-analytics').classList.contains('active')) startSSE();
+          }, 5000);
+        };
+      } catch {}
+    }
+
+    // ─── Export Visitors ───
+
+    async function exportVisitors() {
+      const siteId = document.getElementById('vi-site-filter').value;
+      try {
+        const res = await fetch('/api/vi/export-visitors', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ siteId: siteId || undefined })
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Export failed');
+        }
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Belwo_Visitors_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        setStatus('analytics-status', 'success', 'Visitors exported to Excel!');
+      } catch (e) {
+        setStatus('analytics-status', 'error', 'Export failed: ' + e.message);
+      }
+    }
+
+    // ─── Time Ago Helper ───
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return '—';
+      const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+      if (seconds < 60) return seconds + 's ago';
+      if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+      if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+      return Math.floor(seconds / 86400) + 'd ago';
+    }
+
+    // ═══ UTILS ═══
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str || '';
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>
