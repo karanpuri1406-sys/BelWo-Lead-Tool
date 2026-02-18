@@ -6,12 +6,22 @@
   'use strict';
 
   // Extract site ID and server URL from script tag
-  var scripts = document.getElementsByTagName('script');
-  var currentScript = scripts[scripts.length - 1];
-  var src = currentScript.src;
+  var currentScript = document.currentScript;
+  if (!currentScript) {
+    // Fallback: find script by src containing tracker.js
+    var scripts = document.getElementsByTagName('script');
+    for (var i = 0; i < scripts.length; i++) {
+      if (scripts[i].src && scripts[i].src.indexOf('tracker.js') !== -1) {
+        currentScript = scripts[i];
+        break;
+      }
+    }
+  }
+  if (!currentScript || !currentScript.src) return;
+
   var siteId, serverUrl;
   try {
-    var u = new URL(src);
+    var u = new URL(currentScript.src);
     siteId = u.searchParams.get('sid');
     serverUrl = u.origin;
   } catch(e) { return; }
